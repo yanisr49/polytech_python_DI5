@@ -31,8 +31,8 @@ class Calculator(Frame):
         button_plus = Button(self, text="+", command=lambda: self.add_historic("+"))
         button_plus.grid(row=1, column=3, sticky="nesw")
         self.master.bind("<KP_Add>", lambda event: self.add_historic("+"))
-        button_C = Button(self, text="C", command=self.backspace)
-        button_C.grid(row=1, column=4, sticky="nesw")
+        button_clear = Button(self, text="C", command=self.backspace)
+        button_clear.grid(row=1, column=4, sticky="nesw")
         self.master.bind("<BackSpace>", self.backspace)
 
         button_4 = Button(self, text="4", command=lambda: self.add_historic("4"))
@@ -47,8 +47,8 @@ class Calculator(Frame):
         button_minus = Button(self, text="-", command=lambda: self.add_historic("-"))
         button_minus.grid(row=2, column=3, sticky="nesw")
         self.master.bind("<KP_Subtract>", lambda event: self.add_historic("-"))
-        button_AC = Button(self, text="AC", command=self.reset)
-        button_AC.grid(row=2, column=4, sticky="nesw")
+        button_allclear = Button(self, text="AC", command=self.reset)
+        button_allclear.grid(row=2, column=4, sticky="nesw")
         self.master.bind("<Delete>", self.reset)
 
         button_1 = Button(self, text="1", command=lambda: self.add_historic("1"))
@@ -102,7 +102,7 @@ class Calculator(Frame):
     def display_total(self, event=None):
         try:
             self.display["text"] = str(round(eval(self.display["text"]), 2))
-        except SyntaxError:
+        except SyntaxError or TypeError:
             self.display["text"] = "SYNTAX ERROR"
         self.historic = [self.display["text"]]
 
@@ -111,13 +111,14 @@ class Calculator(Frame):
         self.historic = ["0"]
 
     def backspace(self, event=None):
-        if len(self.historic) == 1:
+        if len(self.display["text"]) == 1:
             self.reset()
         else:
-            self.historic = self.historic[:-1]
-            self.display["text"] = ""
-            for value in self.historic:
-                self.display["text"] += value
+            self.display["text"] = self.display["text"][:-1]
+            if len(self.historic[-1]) == 1:
+                self.historic = self.historic[:-1]
+            else:
+                self.historic[-1] = self.historic[-1][:-1]
 
 
 window = Tk()
