@@ -27,6 +27,21 @@ class Calculator(Frame):
         button_help = Button(menubar)
         menubar.add_cascade(label="Aide", menu=button_help)
 
+    def scientist_mode(self):
+        # fifth column
+        button_cos = Button(self, text="cos(", command=lambda: self.add_historic("cos"))
+        button_cos.grid(row=1, column=6, sticky="nesw")
+
+        button_sin = Button(self, text="sin(", command=lambda: self.add_historic("sin"))
+        button_sin.grid(row=2, column=6, sticky="nesw")
+
+        button_tan = Button(self, text="tan(", command=lambda: self.add_historic("tan"))
+        button_tan.grid(row=3, column=6, sticky="nesw")
+
+        button_pow = Button(self, text="pow(", command=lambda: self.add_historic("pow"))
+        button_pow.grid(row=4, column=6, sticky="nesw")
+        #self.master.bind("<KP_Divide>", lambda event: self.add_historic("/"))
+
     def create_buttons(self):
 
         # Create all buttons
