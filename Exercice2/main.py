@@ -1,4 +1,5 @@
 from tkinter import *
+from math import *
 
 
 class Calculator(Frame):
@@ -96,7 +97,7 @@ class Calculator(Frame):
         button_lpar.grid(row=3, column=4, sticky="nesw")
         self.master.bind("(", lambda event: self.add_historic("("))
 
-        # forth row
+        # fourth row
         button_0 = Button(self, text="0", command=lambda: self.add_historic("0"))
         button_0.grid(row=4, column=0, sticky="nesw")
         self.master.bind("<KP_0>", lambda event: self.add_historic("0"))
@@ -113,6 +114,7 @@ class Calculator(Frame):
         button_rpar = Button(self, text=")", command=lambda: self.add_historic(")"))
         button_rpar.grid(row=4, column=4, sticky="nesw")
         self.master.bind(")", lambda event: self.add_historic(")"))
+        self.scientist_mode()
 
     def add_historic(self, value):
         if self.historic[0] == "SYNTAX ERROR":
