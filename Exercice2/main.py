@@ -5,19 +5,27 @@ class Calculator(Frame):
 
     def __init__(self, master):
         super().__init__(master)
+        self.master = master
         self.pack(fill=BOTH)
 
         self.display = Label(self, text="0", anchor=E)
         self.display["background"] = "#AAAAAA"
         self.display["justify"] = "right"
         self.display.grid(row=0, column=0, columnspan=5, sticky="nesw")
+        self.display.config(font=("Helvetica", 16))
 
+        self.create_menu()
         self.create_buttons()
 
         self.historic = ["0"]
 
     def create_menu(self):
-
+        menubar = Menu(self.master)
+        self.master.config(menu=menubar)
+        button_scientist_mode = Button(menubar)
+        menubar.add_cascade(label="Mode S", menu=button_scientist_mode)
+        button_help = Button(menubar)
+        menubar.add_cascade(label="Aide", menu=button_help)
 
     def create_buttons(self):
 
