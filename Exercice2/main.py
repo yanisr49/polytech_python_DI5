@@ -29,18 +29,18 @@ class Calculator(Frame):
 
     def scientist_mode(self):
         # fifth column
-        button_cos = Button(self, text="cos(", command=lambda: self.add_historic("cos"))
-        button_cos.grid(row=1, column=6, sticky="nesw")
+        button_cos = Button(self, text="cos", command=lambda: self.add_historic("cos("))
+        button_cos.grid(row=1, column=5, sticky="nesw")
 
-        button_sin = Button(self, text="sin(", command=lambda: self.add_historic("sin"))
-        button_sin.grid(row=2, column=6, sticky="nesw")
+        button_sin = Button(self, text="sin", command=lambda: self.add_historic("sin("))
+        button_sin.grid(row=2, column=5, sticky="nesw")
 
-        button_tan = Button(self, text="tan(", command=lambda: self.add_historic("tan"))
-        button_tan.grid(row=3, column=6, sticky="nesw")
+        button_tan = Button(self, text="tan", command=lambda: self.add_historic("tan("))
+        button_tan.grid(row=3, column=5, sticky="nesw")
 
-        button_pow = Button(self, text="pow(", command=lambda: self.add_historic("pow"))
-        button_pow.grid(row=4, column=6, sticky="nesw")
-        #self.master.bind("<KP_Divide>", lambda event: self.add_historic("/"))
+        button_pow = Button(self, text="**", command=lambda: self.add_historic("**"))
+        button_pow.grid(row=4, column=5, sticky="nesw")
+        self.master.bind("<^>", lambda event: self.add_historic("**"))
 
     def create_buttons(self):
 
@@ -118,7 +118,7 @@ class Calculator(Frame):
         if self.historic[0] == "SYNTAX ERROR":
             self.reset()
 
-        if self.display["text"] == "0" and value in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", ")"]:
+        if self.display["text"] == "0" and value in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", ")", "cos(", "sin(", "tan("]:
             self.display["text"] = value
             self.historic = [value]
         else:
