@@ -16,9 +16,13 @@ class Calculator(Frame):
 
         self.historic = ["0"]
 
+    def create_menu(self):
+
+
     def create_buttons(self):
 
         # Create all buttons
+        # first row
         button_7 = Button(self, text="7", command=lambda: self.add_historic("7"))
         button_7.grid(row=1, column=0, sticky="nesw")
         self.master.bind("<KP_7>", lambda event: self.add_historic("7"))
@@ -35,6 +39,7 @@ class Calculator(Frame):
         button_clear.grid(row=1, column=4, sticky="nesw")
         self.master.bind("<BackSpace>", self.backspace)
 
+        # second row
         button_4 = Button(self, text="4", command=lambda: self.add_historic("4"))
         button_4.grid(row=2, column=0, sticky="nesw")
         self.master.bind("<KP_4>", lambda event: self.add_historic("4"))
@@ -51,6 +56,7 @@ class Calculator(Frame):
         button_allclear.grid(row=2, column=4, sticky="nesw")
         self.master.bind("<Delete>", self.reset)
 
+        # third row
         button_1 = Button(self, text="1", command=lambda: self.add_historic("1"))
         button_1.grid(row=3, column=0, sticky="nesw")
         self.master.bind("<KP_1>", lambda event: self.add_historic("1"))
@@ -67,6 +73,7 @@ class Calculator(Frame):
         button_lpar.grid(row=3, column=4, sticky="nesw")
         self.master.bind("(", lambda event: self.add_historic("("))
 
+        # forth row
         button_0 = Button(self, text="0", command=lambda: self.add_historic("0"))
         button_0.grid(row=4, column=0, sticky="nesw")
         self.master.bind("<KP_0>", lambda event: self.add_historic("0"))
@@ -102,7 +109,9 @@ class Calculator(Frame):
     def display_total(self, event=None):
         try:
             self.display["text"] = str(round(eval(self.display["text"]), 2))
-        except SyntaxError or TypeError:
+        except TypeError:
+            self.display["text"] = "SYNTAX ERROR"
+        except SyntaxError:
             self.display["text"] = "SYNTAX ERROR"
         self.historic = [self.display["text"]]
 
