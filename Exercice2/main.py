@@ -7,155 +7,143 @@ class Calculator(Frame):
     def __init__(self, master):
         super().__init__(master)
         self.master = master
-        self.pack(fill=BOTH)
+        self.pack()
 
-        self.display = Label(self, text="0", anchor=E)
-        self.display["background"] = "#AAAAAA"
-        self.display["justify"] = "right"
+        # create display
+        self.scrollbar = Scrollbar(self, orient='horizontal')
+        self.displaytext = StringVar(value="0")
+        self.display = Entry(self, textvariable=self.displaytext, xscrollcommand=self.scrollbar.set, state="readonly")
         self.display.grid(row=0, column=0, columnspan=5, sticky="nesw")
-        self.display.config(font=("Helvetica", 16))
+        self.scrollbar.grid(row=1, columnspan=5, sticky="news")
+        self.scrollbar.config(command=self.display.xview)
+
+        # decor display
+        self.display["foreground"] = "#000000"
+        self.display["borderwidth"] = 0
+        self.display["justify"] = "right"
+        self.display.config(font=("Helvetica", 25))
+
+        self.scientific_buttons = None
+        self.historic = ["0"]
 
         self.create_menu()
         self.create_buttons()
 
-        self.historic = ["0"]
-
     def create_menu(self):
-        menubar = Menu(self.master)
-        self.master.config(menu=menubar)
-        button_scientist_mode = Button(menubar)
-        menubar.add_cascade(label="Mode S", menu=button_scientist_mode)
-        button_help = Button(menubar)
-        menubar.add_cascade(label="Aide", menu=button_help)
+        self.menubar = Menu(self.master)
+        self.master.config(menu=self.menubar)
+
+        self.menubar.add_command(label="Mode S", command=self.scientist_mode)
 
     def scientist_mode(self):
         # fifth column
-        button_cos = Button(self, text="cos", command=lambda: self.add_historic("cos("))
-        button_cos.grid(row=1, column=5, sticky="nesw")
+        buttons = [self.create_button("cos", lambda event=None: self.add_historic("cos("), 2, 5, None),
+                   self.create_button("sin", lambda event=None: self.add_historic("sin("), 3, 5, None),
+                   self.create_button("tan", lambda event=None: self.add_historic("tan("), 4, 5, None),
+                   self.create_button("pow", lambda event=None: self.add_historic("**"), 5, 5, None)]
 
-        button_sin = Button(self, text="sin", command=lambda: self.add_historic("sin("))
-        button_sin.grid(row=2, column=5, sticky="nesw")
+        self.scientific_buttons = buttons
 
-        button_tan = Button(self, text="tan", command=lambda: self.add_historic("tan("))
-        button_tan.grid(row=3, column=5, sticky="nesw")
+        self.display.grid(columnspan=6)
+        self.scrollbar.grid(columnspan=6)
+        self.menubar.delete("Mode S")
+        self.menubar.add_command(label="Mode B", command=self.basic_mode)
 
-        button_pow = Button(self, text="**", command=lambda: self.add_historic("**"))
-        button_pow.grid(row=4, column=5, sticky="nesw")
-        self.master.bind("<^>", lambda event: self.add_historic("**"))
+    def basic_mode(self):
+        for button in self.scientific_buttons:
+            button.grid_remove()
+
+        self.display.grid(columnspan=5)
+        self.scrollbar.grid(columnspan=5)
+        self.menubar.delete("Mode B")
+        self.menubar.add_command(label="Mode S", command=self.scientist_mode)
 
     def create_buttons(self):
-
         # Create all buttons
         # first row
-        button_7 = Button(self, text="7", command=lambda: self.add_historic("7"))
-        button_7.grid(row=1, column=0, sticky="nesw")
-        self.master.bind("<KP_7>", lambda event: self.add_historic("7"))
-        button_8 = Button(self, text="8", command=lambda: self.add_historic("8"))
-        button_8.grid(row=1, column=1, sticky="nesw")
-        self.master.bind("<KP_8>", lambda event: self.add_historic("8"))
-        button_9 = Button(self, text="9", command=lambda: self.add_historic("9"))
-        button_9.grid(row=1, column=2, sticky="nesw")
-        self.master.bind("<KP_9>", lambda event: self.add_historic("9"))
-        button_plus = Button(self, text="+", command=lambda: self.add_historic("+"))
-        button_plus.grid(row=1, column=3, sticky="nesw")
-        self.master.bind("<KP_Add>", lambda event: self.add_historic("+"))
-        button_clear = Button(self, text="C", command=self.backspace)
-        button_clear.grid(row=1, column=4, sticky="nesw")
-        self.master.bind("<BackSpace>", self.backspace)
+        self.create_button("7", lambda event=None: self.add_historic("7"), 2, 0, "<KP_7>")
+        self.create_button("8", lambda event=None: self.add_historic("8"), 2, 1, "<KP_8>")
+        self.create_button("9", lambda event=None: self.add_historic("9"), 2, 2, "<KP_9>")
+        self.create_button("+", lambda event=None: self.add_historic("+"), 2, 3, "<KP_Add>")
+        self.create_button("C", self.backspace, 2, 4, "<BackSpace>")
 
         # second row
-        button_4 = Button(self, text="4", command=lambda: self.add_historic("4"))
-        button_4.grid(row=2, column=0, sticky="nesw")
-        self.master.bind("<KP_4>", lambda event: self.add_historic("4"))
-        button_5 = Button(self, text="5", command=lambda: self.add_historic("5"))
-        button_5.grid(row=2, column=1, sticky="nesw")
-        self.master.bind("<KP_5>", lambda event: self.add_historic("5"))
-        button_6 = Button(self, text="6", command=lambda: self.add_historic("6"))
-        button_6.grid(row=2, column=2, sticky="nesw")
-        self.master.bind("<KP_6>", lambda event: self.add_historic("6"))
-        button_minus = Button(self, text="-", command=lambda: self.add_historic("-"))
-        button_minus.grid(row=2, column=3, sticky="nesw")
-        self.master.bind("<KP_Subtract>", lambda event: self.add_historic("-"))
-        button_allclear = Button(self, text="AC", command=self.reset)
-        button_allclear.grid(row=2, column=4, sticky="nesw")
-        self.master.bind("<Delete>", self.reset)
+        self.create_button("4", lambda event=None: self.add_historic("4"), 3, 0, "<KP_4>")
+        self.create_button("5", lambda event=None: self.add_historic("5"), 3, 1, "<KP_5>")
+        self.create_button("6", lambda event=None: self.add_historic("6"), 3, 2, "<KP_6>")
+        self.create_button("-", lambda event=None: self.add_historic("-"), 3, 3, "<KP_Subtract>")
+        self.create_button("AC", self.reset, 3, 4, "<Delete>")
 
         # third row
-        button_1 = Button(self, text="1", command=lambda: self.add_historic("1"))
-        button_1.grid(row=3, column=0, sticky="nesw")
-        self.master.bind("<KP_1>", lambda event: self.add_historic("1"))
-        button_2 = Button(self, text="2", command=lambda: self.add_historic("2"))
-        button_2.grid(row=3, column=1, sticky="nesw")
-        self.master.bind("<KP_2>", lambda event: self.add_historic("2"))
-        button_3 = Button(self, text="3", command=lambda: self.add_historic("3"))
-        button_3.grid(row=3, column=2, sticky="nesw")
-        self.master.bind("<KP_3>", lambda event: self.add_historic("3"))
-        button_time = Button(self, text="*", command=lambda: self.add_historic("*"))
-        button_time.grid(row=3, column=3, sticky="nesw")
-        self.master.bind("<KP_Multiply>", lambda event: self.add_historic("*"))
-        button_lpar = Button(self, text="(", command=lambda: self.add_historic("("))
-        button_lpar.grid(row=3, column=4, sticky="nesw")
-        self.master.bind("(", lambda event: self.add_historic("("))
+        self.create_button("1", lambda event=None: self.add_historic("1"), 4, 0, "<KP_1>")
+        self.create_button("2", lambda event=None: self.add_historic("2"), 4, 1, "<KP_2>")
+        self.create_button("3", lambda event=None: self.add_historic("3"), 4, 2, "<KP_3>")
+        self.create_button("*", lambda event=None: self.add_historic("*"), 4, 3, "<KP_Multiply>")
+        self.create_button("(", lambda event=None: self.add_historic("("), 4, 4, "(")
 
         # fourth row
-        button_0 = Button(self, text="0", command=lambda: self.add_historic("0"))
-        button_0.grid(row=4, column=0, sticky="nesw")
-        self.master.bind("<KP_0>", lambda event: self.add_historic("0"))
-        button_dot = Button(self, text=".", command=lambda: self.add_historic("."))
-        button_dot.grid(row=4, column=1, sticky="nesw")
-        self.master.bind("<KP_Decimal>", lambda event: self.add_historic("."))
-        button_eq = Button(self, text="=", command=self.display_total)
-        button_eq.grid(row=4, column=2, sticky="nesw")
-        self.master.bind("<KP_Enter>", self.display_total)
-        self.master.bind("<Return>", self.display_total)
-        button_divide = Button(self, text="/", command=lambda: self.add_historic("/"))
-        button_divide.grid(row=4, column=3, sticky="nesw")
-        self.master.bind("<KP_Divide>", lambda event: self.add_historic("/"))
-        button_rpar = Button(self, text=")", command=lambda: self.add_historic(")"))
-        button_rpar.grid(row=4, column=4, sticky="nesw")
-        self.master.bind(")", lambda event: self.add_historic(")"))
-        self.scientist_mode()
+        self.create_button("0", lambda event=None: self.add_historic("0"), 5, 0, "<KP_0>")
+        self.create_button(".", lambda event=None: self.add_historic("."), 5, 1, "<KP_Decimal>")
+        self.create_button("=", self.display_total, 5, 2, "<KP_Enter>")
+        self.create_button("/", lambda event=None: self.add_historic("/"), 5, 3, "<KP_Divide>")
+        self.create_button(")", lambda event=None: self.add_historic(")"), 5, 4, ")")
 
-    def add_historic(self, value):
-        if self.historic[0] == "SYNTAX ERROR":
-            self.reset()
+    def create_button(self, text, command, row, column, bind):
+        # create button
+        button = Button(self, text=text, command=command)
+        button.grid(row=row, column=column)
+        self.master.bind(bind, command)
 
-        if self.display["text"] == "0" and value in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", ")", "cos(", "sin(", "tan("]:
-            self.display["text"] = value
-            self.historic = [value]
-        else:
-            if self.display["text"][-1] in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ")"] and value == "(":
-                self.add_historic("*")
-            if value in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "("] and self.display["text"][-1] == ")":
-                self.add_historic("*")
-            self.display["text"] += value
+        # decor button
+        button["background"] = "#FFFFFF"
+        button["borderwidth"] = 0
+        button["width"] = 6
+        button["height"] = 3
+        button.config(font=("Helvetica", 15))
+
+        return button
+
+    def add_historic(self, value, event=None):
+        if self.historic[-1] == "0" and value in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", "tan(", "sin(", "cos("]:
             self.historic.append(value)
+        else:
+            if self.historic[-1][-1] in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ")"] and value in ["(", "tan(", "sin(", "cos("]:
+                value = "*"+value
+            if self.historic[-1][-1] == ")" and value in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "(", "tan(", "sin(", "cos("]:
+                value = "*"+value
+            if self.historic[-1] == "SYNTAX ERROR":
+                self.historic.append(value)
+            else:
+                self.historic.append(self.historic[-1]+value)
+        self.displaytext.set(self.historic[-1])
 
     def display_total(self, event=None):
         try:
-            self.display["text"] = str(round(eval(self.display["text"]), 2))
+            self.historic.append(str(round(eval(self.historic[-1]), 2)))
+            self.displaytext.set(self.historic[-1])
         except TypeError:
-            self.display["text"] = "SYNTAX ERROR"
+            self.historic.append("SYNTAX ERROR")
+            self.displaytext.set(self.historic[-1])
         except SyntaxError:
-            self.display["text"] = "SYNTAX ERROR"
-        self.historic = [self.display["text"]]
+            self.historic.append("SYNTAX ERROR")
+            self.displaytext.set(self.historic[-1])
+        except ZeroDivisionError:
+            self.historic.append("SYNTAX ERROR")
+            self.displaytext.set(self.historic[-1])
 
     def reset(self, event=None):
-        self.display["text"] = "0"
         self.historic = ["0"]
+        self.displaytext.set(self.historic[-1])
 
     def backspace(self, event=None):
-        if len(self.display["text"]) == 1:
-            self.reset()
-        else:
-            self.display["text"] = self.display["text"][:-1]
-            if len(self.historic[-1]) == 1:
-                self.historic = self.historic[:-1]
-            else:
-                self.historic[-1] = self.historic[-1][:-1]
+        if len(self.historic) > 1:
+            self.historic.pop()
+        self.displaytext.set(self.historic[-1])
 
 
 window = Tk()
 window.title("Calculatrice")
+window.resizable(width=False, height=False)
+
 calc = Calculator(window)
 calc.mainloop()
