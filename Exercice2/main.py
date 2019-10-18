@@ -37,9 +37,8 @@ class Calculator(Frame):
 
     def scientist_mode(self):
         # fifth column
-        buttons = [self.create_button("cos", lambda event=None: self.add_historic("cos("), 2, 5, None),
-                   self.create_button("sin", lambda event=None: self.add_historic("sin("), 3, 5, None),
-                   self.create_button("tan", lambda event=None: self.add_historic("tan("), 4, 5, None),
+                   self.create_button("sin", lambda event=None: self.add_historic("sin("), 3, 5, "<s>"),
+                   self.create_button("tan", lambda event=None: self.add_historic("tan("), 4, 5, "<t>"),
                    self.create_button("pow", lambda event=None: self.add_historic("**"), 5, 5, None)]
 
         self.scientific_buttons = buttons
