@@ -25,6 +25,8 @@ class Password(object):
             username = input("Enter username : \n=> ")
             password = getpass.getpass("User password : \n=> ")
             self.connect(username, password)
+        elif action == "4":
+            self.cipher_file("logs")
         elif action == "3":
             path = input("path to the file : \n=> ")
             self.key = get_random_bytes(16)
@@ -44,6 +46,16 @@ class Password(object):
         elif action == "5":
             return False
         return True
+
+    def cipher_file(self, fileNameToEncrypte):
+        with open(fileNameToEncrypte, mode='rb') as file:  # b is important -> binary
+            fileContent = file.read()
+        key = get_random_bytes(16)
+        cipher = AES.new(key, AES.MODE_EAX)
+        ciphertext, tag = cipher.encrypt_and_digest(fileContent)
+
+        file_out = open("encrypted.bin", "wb")
+        [file_out.write(x) for x in (cipher.nonce, tag, ciphertext)]
 
     def save(self, username, password):
         with open(self.filename, "w") as fil:
