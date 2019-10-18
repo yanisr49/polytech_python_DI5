@@ -11,7 +11,7 @@ class Password(object):
             print("\n---------------------------------------------------------------------")
 
     def ask_action(self):
-        print("\n1 - login\n2 - sign in\n3 - leave\n")
+        print("\n1 - login\n2 - sign in\n3 - leave")
         action = input("=> ")
 
         if action == "1":
