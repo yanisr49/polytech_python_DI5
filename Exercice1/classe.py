@@ -1,5 +1,6 @@
 import datetime
 
+
 class Date(object):
 	# Class defining a date containing a day / month / year
 
@@ -40,6 +41,7 @@ class Date(object):
 	# attribut day
 	def _get_day(self):
 		return self._day
+
 	def _set_day(self, day):
 		if not isinstance(day, int) and not isinstance(day, str):
 			raise TypeError("Le jour doit être un entier ou une chaine de caractère")
