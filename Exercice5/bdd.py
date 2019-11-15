@@ -30,19 +30,19 @@ class Database(object):
         self.db.commit()
 
     def create_table_region(self):
-        self.c.execute('''CREATE TABLE region (code_region integer PRIMARY KEY, name text NOT NULL)''')
+        self.c.execute('''CREATE TABLE region (code_region text PRIMARY KEY, name text NOT NULL)''')
         print('log - Table region created')
         self.db.commit()
 
     def create_table_departement(self):
         self.c.execute(
-            '''CREATE TABLE departement (code_departement integer PRIMARY KEY, name text NOT NULL, code_region integer, FOREIGN KEY(code_region) REFERENCES region(code_region))''')
+            '''CREATE TABLE departement (code_departement text PRIMARY KEY, name text NOT NULL, code_region text, FOREIGN KEY(code_region) REFERENCES region(code_region))''')
         print('log - Table departement created')
         self.db.commit()
 
     def create_table_commune(self):
         self.c.execute(
-            '''CREATE TABLE commune (code_commune integer PRIMARY KEY, name text NOT NULL, pop_tot integer,code_departement integer, FOREIGN KEY(code_departement)REFERENCES departement(code_departement))''')
+            '''CREATE TABLE commune (code_commune text, name text NOT NULL, pop_tot text,code_departement text, FOREIGN KEY(code_departement)REFERENCES departement(code_departement))''')
         print('log - Table commune created')
         self.db.commit()
 
@@ -52,7 +52,6 @@ class Database(object):
         print('log - ' + str(len(self.parser.get_regions())) + ' regions inserted')
 
     def add_all_departements(self):
-        print(self.parser.get_departements()[0])
         self.c.executemany('INSERT INTO departement VALUES (?, ?, ?)', self.parser.get_departements())
         self.db.commit()
         print('log - ' + str(len(self.parser.get_departements())) + ' departements inserted')
