@@ -10,6 +10,12 @@ class Database(object):
         self.c = self.db.cursor()
         self.parser = Parser()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.close()
+
     def create_all(self):
         self.reset_tables()
         self.create_table_region()
@@ -21,7 +27,6 @@ class Database(object):
         self.print_regions()
         self.print_departements()
         self.print_communes()
-        self.close()
 
     def reset_tables(self):
         self.c.execute('''DROP TABLE IF EXISTS region''')
@@ -79,9 +84,44 @@ class Database(object):
             print(row)
         print('log - ' + str(len(self.c.execute('SELECT * FROM commune').fetchall())) + ' communes found')
 
+    def pop_tot(self):
+        dep_pop_tot = []
+        self.c.execute('SELECT d.name, c.pop_tot from departement d INNER JOIN commune c ON d.code_departement = c.code_departement ORDER BY d.name')
+        for row in self.c.fetchall():
+            if len(dep_pop_tot) > 0:
+                if row[0] == dep_pop_tot[-1][0]:
+                    dep_pop_tot[-1][1] = dep_pop_tot[-1][1] + int(row[1].replace(" ", ""))
+                else:
+                    dep_pop_tot.append([row[0], int(row[1].replace(" ", ""))])
+            else:
+                dep_pop_tot.append([row[0], int(row[1].replace(" ", ""))])
+
+        reg_pop = []
+        self.c.execute('SELECT r.name, d.name FROM region r INNER JOIN departement d ON r.code_region = d.code_region ORDER BY r.name')
+        for row in self.c.fetchall():
+            if len(reg_pop) > 0:
+                if row[0] == reg_pop[-1][0]:
+                    reg_pop[-1][1] = reg_pop[-1][1] + self.get_pop_from_dep(dep_pop_tot, row[1])
+                else:
+                    reg_pop.append([row[0], self.get_pop_from_dep(dep_pop_tot, row[1])])
+            else:
+                reg_pop.append([row[0], self.get_pop_from_dep(dep_pop_tot, row[1])])
+
+        for row in dep_pop_tot:
+            print(row[0] + " à une population de " + str(row[1]))
+        for row in reg_pop:
+            print(row[0] + " à une population de " + str(row[1]))
+
+    def get_pop_from_dep(self, departements, departement):
+        for row in departements:
+            if row[0] == departement:
+                return row[1]
+        return 0
+
     def close(self):
         self.db.close()
 
 
-database = Database()
-database.create_all()
+with Database() as db:
+    db.create_all()
+    db.pop_tot()
