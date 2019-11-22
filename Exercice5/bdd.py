@@ -1,5 +1,6 @@
 import sqlite3
 from Exercice5.CSVParser import *
+from lxml import etree
 
 
 class Database(object):
@@ -27,7 +28,6 @@ class Database(object):
         self.print_regions()
         self.print_departements()
         self.print_communes()
-        self.find_different_commune()
 
     def reset_tables(self):
         self.c.execute('''DROP TABLE IF EXISTS region''')
@@ -66,6 +66,15 @@ class Database(object):
         self.c.executemany('INSERT INTO commune VALUES (?, ?, ?, ?)', self.parser.get_communes())
         self.db.commit()
         print('log - ' + str(len(self.parser.get_communes())) + ' communes inserted')
+
+    def get_regions(self):
+        return self.c.execute('SELECT * FROM region ORDER BY name').fetchall()
+
+    def get_departements(self):
+        return self.c.execute('SELECT * FROM departement ORDER BY name').fetchall()
+
+    def get_communes(self):
+        return self.c.execute('SELECT * FROM commune ORDER BY name').fetchall()
 
     def print_regions(self):
         self.c.execute('SELECT * FROM region ORDER BY name')
@@ -134,10 +143,34 @@ class Database(object):
                 return row[1]
         return 0
 
+    def to_xml(self):
+        regionsXML = etree.Element("regions")
+        for region in self.c.execute('SELECT * FROM region ORDER BY name').fetchall():
+            regionXML = etree.SubElement(regionsXML, "region")
+            regionXML.set("region-id", region[0])
+            etree.SubElement(regionXML, "nom").text = region[1]
+            departementsXML = etree.SubElement(regionXML, "departements")
+            for departement in self.c.execute('SELECT * FROM departement WHERE code_region = \'' + region[0] + '\'').fetchall():
+                departementXML = etree.SubElement(departementsXML, "departement")
+                departementXML.set("departement-id", departement[0])
+                etree.SubElement(departementXML, "nom").text = departement[1]
+                communesXML = etree.SubElement(departementXML, "communes")
+                for commune in self.c.execute('SELECT * FROM commune WHERE code_departement = \'' + departement[0] + '\'').fetchall():
+                    communeXML = etree.SubElement(communesXML, "commune")
+                    communeXML.set("commune-id", commune[0])
+                    etree.SubElement(communeXML, "nom").text = commune[1]
+                    etree.SubElement(communeXML, "pop_tot").text = commune[2]
+
+        f = open("bdds/save.xml", "w")
+        f.write(etree.tostring(regionsXML, pretty_print=True).decode("utf-8"))
+        f.close()
+
     def close(self):
         self.db.close()
 
 
 with Database() as db:
     db.create_all()
-    db.pop_tot()
+    #db.pop_tot()
+    #db.find_different_commune()
+    db.to_xml()
