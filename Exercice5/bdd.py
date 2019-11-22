@@ -87,13 +87,18 @@ class Database(object):
 
     def find_different_commune(self):
         self.c.execute('SELECT comu.name, comu.code_departement, com.code_departement FROM commune comu INNER JOIN commune com ON com.name = comu.name WHERE com.code_departement <> comu.code_departement')
-        '''commuName = ""
+        departementName = ""
+        commune = ""
         for row in self.c.fetchall():
-            if commuName == "":
-                commuName = row[0]
-            elif commuName == row[0]:
-                commuName += row[]
-            print(row)'''
+            if departementName != row[0]:
+                print(departementName + " -- " + commune)
+                departementName = row[0]
+                commune = ""
+                commune = commune + row[1]
+                commune = commune + ", " + row[2]
+            elif departementName == row[0]:
+                commune = commune + ", " + row[2]
+        print(departementName + " -- " + commune)
 
     def pop_tot(self):
         dep_pop_tot = []
