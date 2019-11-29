@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-from scipy import ndimage
-from scipy import misc
+import imageio
+import PIL
 
 class NumpyE(object):
 
@@ -49,9 +49,11 @@ class NumpyE(object):
 
     def line(self, x, a, b):
         return a * x + b
-
+"""
     def question5(self):
-        f = misc.face()
-        misc.imsave('face.png', f)  # uses the Image module (PIL)
-
-NumpyE().question5()
+        a = imageio.imread('pillow.png')
+        a.resize(200,200, 5)
+        plt.imshow(a)
+        plt.show()
+"""
+NumpyE().question3()
