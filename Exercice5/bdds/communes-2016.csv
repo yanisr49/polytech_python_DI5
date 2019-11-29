@@ -4,7 +4,7 @@ Mise en ligne le 02/08/2016       Découpage géographique au 01/01/2016;;;;;;;
 ©Insee       Sources : Insee, Code officiel géographique ;;;;;;;
 Code géographique;Libellé géographique;Département;Région;Intercommunalité - Métropole;Nature d'EPCI;Arrondissement;Canton ville
 CODGEO;LIBGEO;DEP;REG;EPCI;NATURE_EPCI;ARR;CV
-01001;L'Abergement-Clémenciat;01;84;200035210;CC;012;0108
+01001;L'Abergement-Clémenciatc;01;84;200035210;CC;012;0108
 01002;L'Abergement-de-Varey;01;84;240100883;CC;011;0101
 01004;Ambérieu-en-Bugey;01;84;240100883;CC;011;0101
 01005;Ambérieux-en-Dombes;01;84;200042497;CC;012;0122

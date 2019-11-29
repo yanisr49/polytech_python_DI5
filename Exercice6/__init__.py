@@ -1,8 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-import imageio
-import PIL
+from scipy import ndimage
+from scipy import misc
+from PIL import Image
+from scipy import ndimage
 
 class NumpyE(object):
 
@@ -49,11 +51,15 @@ class NumpyE(object):
 
     def line(self, x, a, b):
         return a * x + b
-"""
+
     def question5(self):
-        a = imageio.imread('pillow.png')
-        a.resize(200,200, 5)
-        plt.imshow(a)
+        imgpil = Image.open("999decide.jpg")
+        # anciennement np.asarray
+
+        imgpil = imgpil.resize((int(imgpil.size[0]/2), int(imgpil.size[1] / 2)), Image.ANTIALIAS)
+
+        img = np.array(imgpil)  # Transformation de l'image en tableau numpy
+        plt.imshow(img)
         plt.show()
-"""
-NumpyE().question3()
+
+NumpyE().question5()

@@ -1,6 +1,5 @@
 import sqlite3
 from Exercice5.CSVParser import *
-from lxml import etree
 
 
 class Database(object):
@@ -20,19 +19,24 @@ class Database(object):
     def create_all(self):
         self.reset_tables()
         self.create_table_region()
+        self.create_table_new_region()
         self.create_table_departement()
         self.create_table_commune()
         self.add_all_regions()
+        self.add_all_new_regions()
         self.add_all_departements()
         self.add_all_communes()
         self.print_regions()
+        #self.print_new_regions()
         self.print_departements()
-        self.print_communes()
+        #self.print_communes()
+        #self.find_different_commune()
 
     def reset_tables(self):
         self.c.execute('''DROP TABLE IF EXISTS region''')
         self.c.execute('''DROP TABLE IF EXISTS departement''')
         self.c.execute('''DROP TABLE IF EXISTS commune''')
+        self.c.execute('''DROP TABLE IF EXISTS newregion''')
         self.db.commit()
 
     def create_table_region(self):
@@ -40,9 +44,14 @@ class Database(object):
         print('log - Table region created')
         self.db.commit()
 
+    def create_table_new_region(self):
+        self.c.execute('''CREATE TABLE newregion (code_newregion text PRIMARY KEY, name text NOT NULL)''')
+        print('log - Table newregion created')
+        self.db.commit()
+
     def create_table_departement(self):
         self.c.execute(
-            '''CREATE TABLE departement (code_departement text PRIMARY KEY, name text NOT NULL, code_region text, FOREIGN KEY(code_region) REFERENCES region(code_region))''')
+            '''CREATE TABLE departement (code_departement text PRIMARY KEY, name text NOT NULL, code_region text, code_newregion text DEFAULT NULL, FOREIGN KEY(code_region) REFERENCES region(code_region), FOREIGN KEY(code_newregion) REFERENCES newregion(code_newregion))''')
         print('log - Table departement created')
         self.db.commit()
 
@@ -57,8 +66,13 @@ class Database(object):
         self.db.commit()
         print('log - ' + str(len(self.parser.get_regions())) + ' regions inserted')
 
+    def add_all_new_regions(self):
+        self.c.executemany('INSERT INTO newregion VALUES (?, ?)', self.parser.get_new_regions())
+        self.db.commit()
+        print('log - ' + str(len(self.parser.get_new_regions())) + ' newregions inserted')
+
     def add_all_departements(self):
-        self.c.executemany('INSERT INTO departement VALUES (?, ?, ?)', self.parser.get_departements())
+        self.c.executemany('INSERT INTO departement VALUES (?, ?, ?, ?)', self.parser.get_departements())
         self.db.commit()
         print('log - ' + str(len(self.parser.get_departements())) + ' departements inserted')
 
@@ -81,6 +95,12 @@ class Database(object):
         for row in self.c.fetchall():
             print(row)
         print('log - ' + str(len(self.c.execute('SELECT * FROM region').fetchall())) + ' regions found')
+
+    def print_new_regions(self):
+        self.c.execute('SELECT * FROM newregion ORDER BY name')
+        for row in self.c.fetchall():
+            print(row)
+        print('log - ' + str(len(self.c.execute('SELECT * FROM newregion').fetchall())) + ' newregions found')
 
     def print_departements(self):
         self.c.execute('SELECT * FROM departement ORDER BY name')
