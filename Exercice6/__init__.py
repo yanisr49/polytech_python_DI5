@@ -1,4 +1,8 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+from scipy import ndimage
+from scipy import misc
 
 class NumpyE(object):
 
@@ -25,5 +29,29 @@ class NumpyE(object):
         m1 = np.random.rand(3,3)
         print(np.linalg.det(m1)) # calcul le déterminant
         print(np.linalg.inv(m1)) # calcul la matrice inverse
+        a1 = np.array([[3, 1], [1, 2]])  # résout ce systeme 3 * x0 + x1 = 9 et x0 + 2 * x1 = 8:
+        a2 = np.array([9, 8])
+        res_sys = np.linalg.solve(a1, a2)
+        print(res_sys)
+        print(np.linalg.eig(np.linspace(0, 8, 9).reshape(3, 3)))  # le premier array renvoie représente les valeurs propres et le deuxième représente les vecteurs propres associés a ces valeurs propres
 
-NumpyE().question3()
+    def question4(self):
+        x = np.random.uniform(0., 100., 100)
+        y = 3. * x + 2. + np.random.normal(0., 10., 100)
+        e = np.repeat(10., 100)
+        popt, pcov = curve_fit(self.line, x, y, sigma=e)
+
+        plt.plot(x, y, '.')
+        plt.errorbar(x, y, yerr=e, fmt="none")
+        xfine = np.linspace(0., 100., 100)  # define values to plot the function for
+        plt.plot(xfine, self.line(xfine, popt[0], popt[1]), 'r-')
+        plt.show()
+
+    def line(self, x, a, b):
+        return a * x + b
+
+    def question5(self):
+        f = misc.face()
+        misc.imsave('face.png', f)  # uses the Image module (PIL)
+
+NumpyE().question5()
