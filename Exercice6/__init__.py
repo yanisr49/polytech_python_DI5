@@ -1,10 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-from scipy import ndimage
-from scipy import misc
 from PIL import Image
-from scipy import ndimage
 
 class NumpyE(object):
 
