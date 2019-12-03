@@ -62,4 +62,4 @@ class NumpyE(object):
         plt.imshow(img)
         plt.show()
 
-NumpyE().question5()
+NumpyE().question2()
