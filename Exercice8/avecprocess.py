@@ -1,9 +1,5 @@
-import random
-import sys
-from threading import Thread, RLock
-import time
 import timeit
-from multiprocessing import Pool, Process, set_start_method, Queue
+from multiprocessing import Pool
 
 
 def f(x):

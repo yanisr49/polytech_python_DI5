@@ -1,7 +1,4 @@
-import random
-import sys
 from threading import Thread, RLock
-from multiprocessing import Process
 import time
 
 verrou = RLock()
