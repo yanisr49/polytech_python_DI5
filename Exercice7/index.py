@@ -13,7 +13,7 @@ name = form.getvalue("name")
 password = form.getvalue("password")
 
 if name == "paul" and password == "retail":
-    httpd = http.HTTPServer(('bingo.py', 8888), http.SimpleHTTPRequestHandler) # marche pas
+    httpd = http.HTTPServer(('bingo.py', 8888), http.SimpleHTTPRequestHandler)
     httpd.serve_forever()
 
 html = """<!DOCTYPE html>

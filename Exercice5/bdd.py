@@ -1,4 +1,7 @@
 import sqlite3
+
+from pip._vendor.html5lib.treebuilders import etree
+
 from Exercice5.CSVParser import *
 
 
