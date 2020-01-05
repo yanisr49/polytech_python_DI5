@@ -53,10 +53,10 @@ class NumpyE(object):
         imgpil = Image.open("999decide.jpg")
         # anciennement np.asarray
 
-        imgpil = imgpil.resize((int(imgpil.size[0]/2), int(imgpil.size[1] / 2)), Image.ANTIALIAS)
+        imgpil = imgpil.resize((int(imgpil.size[0]/10), int(imgpil.size[1] / 10)), Image.ANTIALIAS)
 
         img = np.array(imgpil)  # Transformation de l'image en tableau numpy
         plt.imshow(img)
         plt.show()
 
-NumpyE().question2()
+NumpyE().question5()
